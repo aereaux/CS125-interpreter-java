@@ -18,6 +18,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import com.cs196.asm.Debugger;
+import com.cs196.asm.Interpreter;
+
 
 /*
  * The Editor frame (window) is being implemented here as a Singleton.
@@ -42,6 +45,7 @@ public class EditorFrame extends JFrame
 	
 	//frame constants
 	private static final String title = "CS196 Assembly Interpreter";
+	private static final String initConsoleText = "Debugger / Error Console";
 	private static final int iWidth = 480;
 	private static final int iHeight = 600;
 	
@@ -50,11 +54,13 @@ public class EditorFrame extends JFrame
 	private JTextArea textArea;
 	private JScrollPane textScrollPane;
 	
-	//debugger/run panel
+	//debugger/run panels
 	private JPanel lowerPanel;
 	private JTextArea console;
 	private JScrollPane consoleScrollPane;
+	private JPanel buttonPanel;
 	private JButton runButton;
+	private JButton clearButton;
 
 	// TODO : enable file loading and saving functionality
 	//top menu
@@ -78,13 +84,19 @@ public class EditorFrame extends JFrame
 		//initializing frame elements
 		textArea = new JTextArea();
 		textScrollPane = new JScrollPane(textArea);
+		
 		lowerPanel = new JPanel();
 		lowerPanel.setLayout(new BorderLayout());
 		lowerPanel.setPreferredSize(new Dimension(this.getWidth(), 80));
-		console = new JTextArea("Debugger / Error Console");
+		console = new JTextArea(initConsoleText);
 		console.setEditable(false);
 		consoleScrollPane = new JScrollPane(console);
+		
+		buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
 		runButton = new JButton("Run");
+		clearButton = new JButton("Clear");
+		
 		menuBar = new JMenuBar();
 		file = new JMenu("File");
 		load = new JMenuItem("Load Program");
@@ -100,8 +112,11 @@ public class EditorFrame extends JFrame
 		//adding frame elements
 		this.add(textScrollPane, BorderLayout.CENTER);
 		lowerPanel.add(consoleScrollPane, BorderLayout.CENTER);
-		lowerPanel.add(runButton, BorderLayout.EAST);
+		buttonPanel.add(runButton, BorderLayout.CENTER);
+		buttonPanel.add(clearButton, BorderLayout.SOUTH);
+		lowerPanel.add(buttonPanel, BorderLayout.EAST);
 		this.add(lowerPanel, BorderLayout.SOUTH);
+		
 		file.add(load);
 		file.addSeparator();
 		file.add(save);
@@ -132,6 +147,17 @@ public class EditorFrame extends JFrame
 						setTheme("Metal");
 					}});
 		
+		//adding execution functionality to run button
+		runButton.addActionListener(new Execute());
+		
+		//clear button functionality (shouldn't cause concurrency issues, but keep an eye open)
+		clearButton.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent arg0)
+					{
+						console.setText("");
+					}});
+		
 		setSize(new Dimension(iWidth, iHeight));
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -160,8 +186,25 @@ public class EditorFrame extends JFrame
 			SwingUtilities.updateComponentTreeUI(this);
 		} catch (Exception e) 
 		{ 
-			JOptionPane.showMessageDialog(this, "An unknown error has occurred in changing your theme.", 
+			JOptionPane.showMessageDialog(this, "An error has occurred in changing your theme.", 
 					"Error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
+	}
+	
+	/*
+	 * The Execute class starts the program when the run button is pressed.
+	 */
+	private class Execute implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent arg0) 
+		{
+			String text = console.getText();
+			String[] lines = text.split("\n");
+			Interpreter i = new Interpreter(
+					new Debugger(lines, console, 50));
+		}
+
 	}
 }
