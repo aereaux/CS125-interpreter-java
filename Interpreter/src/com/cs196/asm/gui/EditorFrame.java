@@ -200,7 +200,7 @@ public class EditorFrame extends JFrame
 		@Override
 		public void actionPerformed(ActionEvent arg0) 
 		{
-			String text = console.getText();
+			String text = textArea.getText();
 			String[] lines = text.split("\n");
 			Interpreter i = new Interpreter(
 					new Debugger(lines, console, 50));
