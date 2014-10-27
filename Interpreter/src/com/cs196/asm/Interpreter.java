@@ -28,23 +28,21 @@ public class Interpreter implements Runnable
 	
 	public Interpreter(Debugger debugger)
 	{
+		program = new Program();
 		this.debugger = debugger;
 		debugger.clear();
 		if(debugger.load(program))
 		{
+			program.populate();
 			interpreterThread = new Thread(this);
 			interpreterThread.start();
 		}
-		else
-		{
-			debugger.putLine("--Program Execution Failed");
-		}
 	}
-	
 	
 	//INTERPRETER THREAD. The basic run cycle will be outlined here.
 	public void run()
 	{
+		debugger.putLine("Starting...");
 		while(program.step())
 		{
 			try
@@ -52,6 +50,13 @@ public class Interpreter implements Runnable
 				Thread.sleep(debugger.getSleepTimeMS());
 			}catch(Exception e){ e.printStackTrace(); }
 		}
-		
+		debugger.putLine("Program Complete");
+	}
+	
+	
+	//terminates current program, typically upon "Run" button being pressed
+	public void close()
+	{
+		program.dispose();
 	}
 }

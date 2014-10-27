@@ -35,6 +35,8 @@ public class EditorFrame extends JFrame
 {
 	private static EditorFrame instance;
 	
+	private Interpreter interpreter = null;
+	
 	//declared "syncrhonized" as a safeguard against multithreading
 	public synchronized static EditorFrame getInstance()
 	{
@@ -202,7 +204,10 @@ public class EditorFrame extends JFrame
 		{
 			String text = textArea.getText();
 			String[] lines = text.split("\n");
-			Interpreter i = new Interpreter(
+			if(interpreter != null)
+				interpreter.close();
+			
+			interpreter = new Interpreter(
 					new Debugger(lines, console, 50));
 		}
 
