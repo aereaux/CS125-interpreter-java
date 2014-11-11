@@ -32,7 +32,7 @@ public class DataWindow extends JFrame
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		topPanel = new JPanel();
-		topPanel.setPreferredSize(new Dimension(400, 400));
+		topPanel.setPreferredSize(new Dimension(200, 500));
 		dataPanel = new JPanel();
 		//dataPanel.setBackground(Color.WHITE);
 		topPanel.setBackground(new Color(200, 220, 255));
