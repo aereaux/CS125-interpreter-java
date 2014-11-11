@@ -35,7 +35,7 @@ public class DataWindow extends JFrame
 		topPanel.setPreferredSize(new Dimension(400, 400));
 		dataPanel = new JPanel();
 		//dataPanel.setBackground(Color.WHITE);
-		topPanel.setBackground(Color.WHITE);
+		topPanel.setBackground(new Color(200, 220, 255));
 		
 		data = new LinkedList<Datum>();
 	}
